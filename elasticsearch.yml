@@ -1,0 +1,2 @@
+#允许 JVM 锁住内存，禁止操作系统交换出去
+bootstrap.memory_lock：true 
