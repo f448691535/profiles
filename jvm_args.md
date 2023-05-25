@@ -30,7 +30,7 @@ jvm最大堆内存限制为32766m，约为31.99G，超过这个值则jvm不使�
 可通过JAVA_HOME=`/usr/libexec/java_home -v 1.8` java -Xmx32767m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops  命令来测试
      bool UseCompressedOops   = false
      上面为测试结果，为true表示使用了指针压缩，false则表示没有使用  
-     参考es堆内存设置引导(#https://www.elastic.co/guide/en/elasticsearch/guide/master/heap-sizing.html#_give_less_than_half_your_memory_to_lucene)
+     参考es堆内存设置引导(https://www.elastic.co/guide/en/elasticsearch/guide/master/heap-sizing.html#_give_less_than_half_your_memory_to_lucene)
      
 -Xmx32766m //最大内存为32766m
 -Xms32766m //初始内存设置为与最大内存相同  
