@@ -1,0 +1,28 @@
+分片重平衡公式：总分片数=max(节点数×1.5, 总数据量/50GB)
+配置公式：堆内存必须≤31GB，建议通过公式计算：堆内存=min(31GB, 物理内存/2)
+三、避坑指南：血的教训换来的Checklist
+  1.分片黑洞：
+    ❌ 单分片超过50GB（IO瓶颈直接拉垮查询性能）
+    ✅ 强制设置 index.routing.allocation.total_shards_per_node=3（防止单节点分片过载）
+  2.硬件天坑：
+     ❌ HDD磁盘 + 机械RAID5（随机读延迟爆炸）
+    ✅ NVMe SSD + RAID0（配合多副本，速度与容错兼得）
+  3.查询自杀
+    ❌ "query": { "match_all": {} } + "size": 10000（全量扫描+超大结果集）
+    ❌ "terms": { "user_id": [/* 10万个值 */] }（导致CircuitBreakException）
+    ✅ 终极求生方案：
+        GET /_search  
+        {    
+          "timeout": "5s",  // 强制超时拦截    
+          "query": {      
+            "bool": {        
+              "filter": [ /* 缓存过滤条件 */ ],
+              "must": { 
+                "range": { 
+                  "@timestamp": { "gte": "now-1h" }
+                }
+              } // 时间窗口限定      
+            }
+          },
+          "track_total_hits": false  // 跳过精确计数  
+        }
