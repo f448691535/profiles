@@ -26,3 +26,14 @@
           },
           "track_total_hits": false  // 跳过精确计数  
         }
+    4. 关联陷阱
+      ❌ 放任 fielddata: true（堆内存泄漏警告！）
+      ✅ 改用 eager_global_ordinals
+核心参数：
+  PUT _cluster/settings  
+      {    
+        "transient": {      
+            "cluster.routing.allocation.node_concurrent_recoveries": 5, // 默认2      
+            "indices.recovery.max_bytes_per_sec": "200mb" // 默认40mb    
+        }  
+      } 
